@@ -44,10 +44,27 @@
             android:layout_marginTop="4dp"
             android:textSize="12sp" />
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/textStatus"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:background="#106200EE"
+            android:padding="8dp"
+            android:textSize="12sp"
+            android:textStyle="italic"
+            android:textColor="@color/purple_500" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="8dp"
+            android:background="#E0E0E0" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
             android:gravity="end"
             android:orientation="horizontal">
 

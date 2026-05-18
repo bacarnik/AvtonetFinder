@@ -33,6 +33,22 @@ class SearchAdapter(
             } else "Never"
             textLastChecked.text = "Last check: $dateStr"
 
+            val progress = ScanManager.scanProgress.value[search.id]
+            if (progress != null && progress.status != ScanStatus.IDLE) {
+                val isTerminal = progress.status == ScanStatus.COMPLETED || progress.status == ScanStatus.FAILED || progress.status == ScanStatus.TIMEOUT
+                if (isTerminal) {
+                    textStatus.text = progress.message
+                } else {
+                    textStatus.text = "${progress.message} (${progress.currentStep}/${progress.totalSteps})"
+                }
+                textStatus.visibility = android.view.View.VISIBLE
+            } else if (!search.lastResult.isNullOrEmpty()) {
+                textStatus.text = search.lastResult
+                textStatus.visibility = android.view.View.VISIBLE
+            } else {
+                textStatus.visibility = android.view.View.GONE
+            }
+
             switchEnabled.setOnCheckedChangeListener { _, isChecked ->
                 onToggle(search.id, isChecked)
             }

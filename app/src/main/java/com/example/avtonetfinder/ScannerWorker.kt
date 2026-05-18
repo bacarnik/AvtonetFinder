@@ -11,26 +11,18 @@ class ScannerWorker(context: Context, params: WorkerParameters) : Worker(context
         val calendar = Calendar.getInstance()
         val hour = calendar.get(Calendar.HOUR_OF_DAY)
 
-        // Stop scans after 22:00 and before 08:00
-        // Exception: we can let it run at 08:00 exactly or the first one after 08:00
         if (hour < 8 || hour >= 22) {
             return Result.success()
         }
 
-        val dbHelper = DatabaseHelper(applicationContext)
-        val scraper = Scraper()
-        val notifier = NotificationHelper(applicationContext)
-
-        val searches = dbHelper.getAllSearches()
-        for (search in searches) {
-            if (search.isEnabled) {
-                val newListings = scraper.fetchNewListings(search.url, dbHelper)
-                for (listing in newListings) {
-                    notifier.showNotification(listing)
-                    dbHelper.markListingAsSeen(listing.id)
-                }
-                dbHelper.updateLastChecked(search.id, System.currentTimeMillis())
-            }
+        val intent = android.content.Intent(applicationContext, ScanService::class.java).apply {
+            action = ScanService.ACTION_START_SCAN
+        }
+        
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            applicationContext.startForegroundService(intent)
+        } else {
+            applicationContext.startService(intent)
         }
 
         return Result.success()
